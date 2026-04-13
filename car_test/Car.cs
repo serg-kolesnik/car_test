@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace car_test
 {
     internal class Car
     {
+        private static readonly Random rng = new Random();
+
         int id;
         string mark;
         string color;
@@ -32,6 +30,7 @@ namespace car_test
         {
             this.id = id;
             this.mark = mark;
+            this.color = "Черный";
         }
 
         public int Id { get => id; set => id = value; }
@@ -41,7 +40,8 @@ namespace car_test
             get { return color; }
             set
             {
-                if (value.ToLower() == "радужный") throw new Exception("Радужный цвет не поддерживается");
+                if (value.ToLower() == "радужный")
+                    throw new ArgumentException("Радужный цвет не поддерживается");
                 color = value;
             }
         }
@@ -52,16 +52,20 @@ namespace car_test
 
         public static int checkPrice(Car car)
         {
+            if (car == null) return 0;
+
             int price = 0;
-            if (new[] { "волга", "москвич", "жигули" }.Contains(car.Mark.ToLower()))
+            string markLower = car.Mark?.ToLower() ?? "";
+
+            if (new[] { "волга", "москвич", "жигули" }.Contains(markLower))
             {
                 price += 100000;
             }
-            else if (new[] { "мерседес", "бмв", "ауди" }.Contains(car.Mark.ToLower()))
+            else if (new[] { "мерседес", "бмв", "ауди" }.Contains(markLower))
             {
                 price += 300000;
             }
-            else if (new[] { "ламборгини", "феррари", "порше" }.Contains(car.Mark.ToLower()))
+            else if (new[] { "ламборгини", "феррари", "порше" }.Contains(markLower))
             {
                 price += 1000000;
             }
@@ -74,12 +78,13 @@ namespace car_test
 
         public static bool testDrive(Car car)
         {
-            bool success = true;
-            if (new[] { "бмв", "москвич", "жигули", "волга" }.Contains(car.Mark.ToLower()))
+            if (car == null) return false;
+
+            if (new[] { "бмв", "москвич", "жигули", "волга" }.Contains(car.Mark?.ToLower() ?? ""))
             {
-                success = Convert.ToBoolean(new Random().Next(0, 5));
+                return rng.Next(0, 5) != 0;
             }
-            return success;
+            return true;
         }
     }
 }
